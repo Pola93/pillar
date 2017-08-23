@@ -21,7 +21,6 @@ object App {
         System.err.println(exception.getMessage)
         System.exit(1)
     }
-
     System.exit(0)
   }
 }

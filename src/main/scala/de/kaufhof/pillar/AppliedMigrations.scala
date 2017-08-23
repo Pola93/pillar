@@ -1,7 +1,11 @@
 package de.kaufhof.pillar
 
-import com.datastax.driver.core.Session
+//import com.datastax.driver.core.Session
 import com.datastax.driver.core.querybuilder.QueryBuilder
+//import com.datastax.driver.core.TableMetadata
+import com.datastax.driver.core._
+import scala.collection.JavaConverters._
+
 import scala.collection.JavaConversions
 import java.util.Date
 
@@ -12,6 +16,15 @@ object AppliedMigrations {
       row => registry(MigrationKey(row.getTimestamp("authored_at"), row.getString("description")))
     })
   }
+
+  def dropTables(session: Session) {
+    val metadata = session.getCluster.getMetadata();
+    val tablesMetadata = metadata.getKeyspace(session.getLoggedKeyspace).getTables
+    tablesMetadata.forEach(println(_))
+    //tablesMetadata.forEach(session.execute("drop table _*"))
+    //val dropTableCQL = SimpleStatement("drop table test_table");
+  }
+
 }
 
 class AppliedMigrations(applied: Seq[Migration]) {

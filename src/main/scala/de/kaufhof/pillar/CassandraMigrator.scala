@@ -10,7 +10,9 @@ object CassandraMigrator {
 
 class CassandraMigrator(registry: Registry, appliedMigrationsTableName: String) extends Migrator {
   override def migrate(session: Session, dateRestriction: Option[Date] = None) {
+    createMigrationsTable1(session)
     val appliedMigrations = AppliedMigrations(session, registry, appliedMigrationsTableName)
+    AppliedMigrations.dropTables(session)
     selectMigrationsToReverse(dateRestriction, appliedMigrations).foreach(_.executeDownStatement(session, appliedMigrationsTableName))
     selectMigrationsToApply(dateRestriction, appliedMigrations).foreach(_.executeUpStatement(session, appliedMigrationsTableName))
   }
@@ -35,6 +37,19 @@ class CassandraMigrator(registry: Registry, appliedMigrationsTableName: String) 
         |   PRIMARY KEY (authored_at, description)
         |  )
       """.stripMargin.format(keyspace, appliedMigrationsTableName)
+    )
+  }
+
+  def createMigrationsTable1(session: Session) = {
+    session.execute(
+      """
+        | CREATE TABLE IF NOT EXISTS %s (
+        |   authored_at timestamp,
+        |   description text,
+        |   applied_at timestamp,
+        |   PRIMARY KEY (authored_at, description)
+        |  )
+      """.stripMargin.format(appliedMigrationsTableName)
     )
   }
 
