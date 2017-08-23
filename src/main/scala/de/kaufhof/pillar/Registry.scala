@@ -2,6 +2,7 @@ package de.kaufhof.pillar
 
 import java.util.Date
 import java.io.{FileInputStream, File}
+import scala.collection.JavaConverters
 
 object Registry {
   def apply(migrations: Seq[Migration]): Registry = {
@@ -20,9 +21,10 @@ object Registry {
     if(!directory.isDirectory) return List.empty
 
     val parser = Parser()
-
-    val list = directory.listFiles.filter { f => f.isFile && f.getName.endsWith(".cql")}.map {
+    println("Parsing files:")
+    directory.listFiles.filter { f => f.isFile && f.getName.endsWith(".cql")}.map {
       file =>
+        println(file.getCanonicalPath)
         val stream = new FileInputStream(file)
         try {
           parser.parse(stream)
@@ -30,8 +32,6 @@ object Registry {
           stream.close()
         }
     }.toList
-    list foreach println
-    return list
   }
 }
 
