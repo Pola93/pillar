@@ -18,6 +18,8 @@ class ConnectionConfiguration(dataStoreName: String, environment: String, appCon
   val seedAddress = connectionConfig.getString("cassandra-seed-address")
   val port = connectionConfig.getInt("cassandra-port")
 
+  val consistencyLevel = connectionConfig.getString("cassandra-consistency-level")
+
   val useSsl = connectionConfig.getBoolean("use-ssl")
 
   import ConfigHelper.toOptionalConfig

@@ -67,7 +67,7 @@ class App(reporter: Reporter, configuration: Config) {
 
   private def createCluster(connectionConfiguration:ConnectionConfiguration): Cluster = {
     val queryOptions = new QueryOptions()
-    queryOptions.setConsistencyLevel(ConsistencyLevel.QUORUM)
+    queryOptions.setConsistencyLevel(ConsistencyLevel.valueOf(connectionConfiguration.consistencyLevel))
 
     val clusterBuilder = Cluster.builder()
       .addContactPoint(connectionConfiguration.seedAddress)
